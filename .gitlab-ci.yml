@@ -1,0 +1,83 @@
+stages:
+  - validate
+  - deploy
+
+packer_lint_sbx:
+  stage: validate
+  image: gitlab.clearpointbusiness.com:4567/aws/ami-builder/ami-packer
+  only:
+    refs:
+      - sandbox
+  variables:
+    AWS_ACCESS_KEY: $SBX_AWS_ACCESS_KEY
+    AWS_SECRET_KEY: $SBX_AWS_SECRET_KEY
+    AWS_REGION: $SBX_AWS_REGION
+    BUILD_VPC_ID: $SBX_BUILD_VPC_ID
+    BUILD_SUBNET_ID: $SBX_BUILD_SUBNET_ID
+    ENV: "SBX"
+  script:
+    - packer validate base_ami.json
+  artifacts:
+    paths:
+      - base_ami.json
+  allow_failure: false
+
+execute_packer_sbx:
+  stage: deploy
+  image: gitlab.clearpointbusiness.com:4567/aws/ami-builder/ami-packer
+  only:
+    refs:
+      - sandbox
+  variables:
+    AWS_ACCESS_KEY: $SBX_AWS_ACCESS_KEY
+    AWS_SECRET_KEY: $SBX_AWS_SECRET_KEY
+    AWS_REGION: $SBX_AWS_REGION
+    BUILD_VPC_ID: $SBX_BUILD_VPC_ID
+    BUILD_SUBNET_ID: $SBX_BUILD_SUBNET_ID
+    ENV: "SBX"
+  script:
+    - chmod 755 configure.sh
+    - packer build base_ami.json
+  dependencies:
+    - packer_lint_sbx
+  allow_failure: false
+  
+packer_lint_prd:
+  stage: validate
+  image: gitlab.clearpointbusiness.com:4567/aws/ami-builder/ami-packer
+  only:
+    refs:
+      - master
+  variables:
+    AWS_ACCESS_KEY: $PRD_AWS_ACCESS_KEY
+    AWS_SECRET_KEY: $PRD_AWS_SECRET_KEY
+    AWS_REGION: $PRD_AWS_REGION
+    BUILD_VPC_ID: $PRD_BUILD_VPC_ID
+    BUILD_SUBNET_ID: $PRD_BUILD_SUBNET_ID
+    ENV: "PRD"
+  script:
+    - packer validate base_ami.json
+  artifacts:
+    paths:
+      - base_ami.json
+  allow_failure: false
+
+execute_packer_prd:
+  stage: deploy
+  image: gitlab.clearpointbusiness.com:4567/aws/ami-builder/ami-packer
+  only:
+    refs:
+      - master
+  variables:
+    AWS_ACCESS_KEY: $PRD_AWS_ACCESS_KEY
+    AWS_SECRET_KEY: $PRD_AWS_SECRET_KEY
+    AWS_REGION: $PRD_AWS_REGION
+    BUILD_VPC_ID: $PRD_BUILD_VPC_ID
+    BUILD_SUBNET_ID: $PRD_BUILD_SUBNET_ID
+    ENV: "PRD"
+  script:
+    - chmod 755 configure.sh
+    - packer build base_ami.json
+  dependencies:
+    - packer_lint_prd
+  allow_failure: false
