@@ -4,7 +4,7 @@ stages:
 
 packer_lint_sbx:
   stage: validate
-  image: gitlab.clearpointbusiness.com:4567/aws/ami-builder/ami-packer
+  image: ### <PLACE DOCKER IMAGE URL HERE>
   only:
     refs:
       - sandbox
@@ -24,7 +24,7 @@ packer_lint_sbx:
 
 execute_packer_sbx:
   stage: deploy
-  image: gitlab.clearpointbusiness.com:4567/aws/ami-builder/ami-packer
+  image: ### <PLACE DOCKER IMAGE URL HERE>
   only:
     refs:
       - sandbox
@@ -44,7 +44,7 @@ execute_packer_sbx:
   
 packer_lint_prd:
   stage: validate
-  image: gitlab.clearpointbusiness.com:4567/aws/ami-builder/ami-packer
+  image: ### <PLACE DOCKER IMAGE URL HERE>
   only:
     refs:
       - master
@@ -64,7 +64,7 @@ packer_lint_prd:
 
 execute_packer_prd:
   stage: deploy
-  image: gitlab.clearpointbusiness.com:4567/aws/ami-builder/ami-packer
+  image: ### <PLACE DOCKER IMAGE URL HERE>
   only:
     refs:
       - master
